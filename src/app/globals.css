@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --background: #060606;
+  --foreground: #f4ead6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--background);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 80% 6%, rgba(217, 185, 118, 0.18), transparent 28rem),
+    radial-gradient(circle at 13% 26%, rgba(141, 162, 183, 0.12), transparent 28rem),
+    radial-gradient(circle at 70% 64%, rgba(143, 46, 34, 0.14), transparent 26rem),
+    #060606;
+  color: var(--foreground);
+  font-family:
+    Inter,
+    "PingFang SC",
+    "Hiragino Sans GB",
+    "Microsoft YaHei",
+    Arial,
+    sans-serif;
+}
+
+body::before {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0.32;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), transparent 78%);
+}
+
+body::after {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0.14;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.62'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: rgba(217, 185, 118, 0.34);
+  color: #fff9e9;
+}
+
+.site-shell {
+  position: relative;
+  z-index: 2;
+}
+
+.glass-panel {
+  border: 1px solid rgba(217, 185, 118, 0.22);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025)),
+    rgba(9, 8, 7, 0.66);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 24px 80px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(20px);
+}
+
+.metal-text {
+  background: linear-gradient(135deg, #fff5d6 0%, #b5883e 44%, #f9de9c 66%, #8b642b 100%);
+  background-clip: text;
+  color: transparent;
+}
+
+.fine-line {
+  background: linear-gradient(90deg, rgba(217, 185, 118, 0), rgba(217, 185, 118, 0.85), rgba(217, 185, 118, 0));
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
