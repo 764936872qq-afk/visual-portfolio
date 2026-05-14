@@ -1,8 +1,9 @@
 import worksData from "@/data/works.json";
 import type { Work, WorkSource } from "@/types/work";
 
-function toPortfolioPath(work: Pick<WorkSource, "category" | "projectFolder">, fileName: string) {
-  return `/portfolio/${work.category}/${work.projectFolder}/${fileName}`;
+function toOptimizedPortfolioPath(work: Pick<WorkSource, "category" | "projectFolder">, fileName: string) {
+  const optimizedFileName = fileName.replace(/\.[^.]+$/, ".webp");
+  return `/portfolio-optimized/${work.category}/${work.projectFolder}/${optimizedFileName}`;
 }
 
 function normalizeImageFiles(imageFiles: WorkSource["imageFiles"]) {
@@ -19,7 +20,7 @@ export function getPortfolioWorks(): Work[] {
       return [];
     }
 
-    const galleryImages = imageFiles.map((fileName) => toPortfolioPath(work, fileName));
+    const galleryImages = imageFiles.map((fileName) => toOptimizedPortfolioPath(work, fileName));
 
     return [
       {

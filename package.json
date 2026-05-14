@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "optimize:images": "node scripts/optimize-static-images.mjs",
+    "prebuild": "npm run optimize:images",
+    "postbuild": "node scripts/prune-static-export.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -23,6 +26,7 @@
     "eslint": "^9.18.0",
     "eslint-config-next": "^15.1.6",
     "postcss": "^8.5.1",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3"
   }
