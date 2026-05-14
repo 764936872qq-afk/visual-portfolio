@@ -103,6 +103,54 @@ body::after {
   scrollbar-width: none;
 }
 
+@media (max-width: 767px) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 78% 4%, rgba(217, 185, 118, 0.11), transparent 18rem),
+      #060606;
+  }
+
+  body::before,
+  body::after,
+  .hero-glow {
+    display: none;
+  }
+
+  .site-nav,
+  .glass-panel,
+  .modal-backdrop,
+  .soft-blur {
+    backdrop-filter: none !important;
+  }
+
+  .glass-panel {
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.02)),
+      rgba(9, 8, 7, 0.82);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 12px 32px rgba(0, 0, 0, 0.28);
+  }
+
+  .shadow-gold,
+  .hover\:shadow-gold:hover {
+    box-shadow: 0 0 18px rgba(217, 185, 118, 0.14) !important;
+  }
+
+  .shadow-halo,
+  .hover\:shadow-halo:hover {
+    box-shadow: 0 0 30px rgba(217, 185, 118, 0.16) !important;
+  }
+
+  img {
+    max-width: min(100%, 100vw);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

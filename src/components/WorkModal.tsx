@@ -8,10 +8,17 @@ import type { Work } from "@/types/work";
 
 type WorkModalProps = {
   work: Work | null;
+  isMobile?: boolean;
   onClose: () => void;
 };
 
-export default function WorkModal({ work, onClose }: WorkModalProps) {
+function isNearbyThumbnail(index: number, activeIndex: number, imageCount: number) {
+  if (imageCount <= 5) return true;
+  const distance = Math.abs(index - activeIndex);
+  return distance <= 1 || distance >= imageCount - 1;
+}
+
+export default function WorkModal({ work, isMobile = false, onClose }: WorkModalProps) {
   const [slideIndex, setSlideIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
@@ -98,7 +105,7 @@ export default function WorkModal({ work, onClose }: WorkModalProps) {
     <AnimatePresence>
       {work ? (
         <motion.div
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/[0.82] p-4 backdrop-blur-xl md:p-8"
+          className="modal-backdrop fixed inset-0 z-[80] flex items-center justify-center bg-black/[0.82] p-4 backdrop-blur-xl md:p-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -106,10 +113,10 @@ export default function WorkModal({ work, onClose }: WorkModalProps) {
         >
           <motion.div
             className="glass-panel grid max-h-[92vh] w-full max-w-7xl overflow-hidden rounded-lg md:grid-cols-[minmax(0,1.35fr)_minmax(340px,0.65fr)]"
-            initial={{ opacity: 0, scale: 0.96, y: 28 }}
+            initial={isMobile ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 28 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 28 }}
-            transition={{ duration: 0.25 }}
+            exit={isMobile ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 28 }}
+            transition={{ duration: isMobile ? 0.16 : 0.25 }}
             onClick={(event) => event.stopPropagation()}
           >
             <div
@@ -121,17 +128,17 @@ export default function WorkModal({ work, onClose }: WorkModalProps) {
                 <motion.div
                   key={currentImage}
                   className="absolute inset-0"
-                  initial={{ opacity: 0, scale: 1.015 }}
+                  initial={isMobile ? { opacity: 0 } : { opacity: 0, scale: 1.015 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.985 }}
-                  transition={{ duration: 0.32, ease: "easeOut" }}
+                  exit={isMobile ? { opacity: 0 } : { opacity: 0, scale: 0.985 }}
+                  transition={{ duration: isMobile ? 0.16 : 0.32, ease: "easeOut" }}
                 >
                   <Image
                     src={currentImage}
                     alt={`${work.title} ${slideIndex + 1}`}
                     fill
-                    sizes="(max-width: 768px) 92vw, 68vw"
-                    quality={82}
+                    sizes="(max-width: 768px) 88vw, 68vw"
+                    quality={isMobile ? 66 : 82}
                     loading="lazy"
                     className="object-contain"
                   />
@@ -141,7 +148,7 @@ export default function WorkModal({ work, onClose }: WorkModalProps) {
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
 
               <div
-                className="absolute left-4 top-4 rounded-full border border-champagne/25 bg-black/[0.45] px-3 py-1.5 text-xs text-champagne backdrop-blur md:left-6 md:top-6"
+                className="soft-blur absolute left-4 top-4 rounded-full border border-champagne/25 bg-black/[0.45] px-3 py-1.5 text-xs text-champagne backdrop-blur md:left-6 md:top-6"
                 aria-live="polite"
               >
                 {slideIndex + 1} / {imageCount || 1}
@@ -150,7 +157,7 @@ export default function WorkModal({ work, onClose }: WorkModalProps) {
               {canSlide ? (
                 <>
                   <button
-                    className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-champagne/45 bg-champagne/12 text-champagne shadow-gold backdrop-blur transition hover:border-champagne hover:bg-champagne hover:text-carbon hover:shadow-halo md:left-6"
+                    className="soft-blur absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-champagne/45 bg-champagne/12 text-champagne shadow-gold backdrop-blur transition hover:border-champagne hover:bg-champagne hover:text-carbon hover:shadow-halo md:left-6"
                     onClick={goPrev}
                     type="button"
                     aria-label="上一张作品图"
@@ -158,7 +165,7 @@ export default function WorkModal({ work, onClose }: WorkModalProps) {
                     <ChevronLeft size={22} />
                   </button>
                   <button
-                    className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-champagne/45 bg-champagne/12 text-champagne shadow-gold backdrop-blur transition hover:border-champagne hover:bg-champagne hover:text-carbon hover:shadow-halo md:right-6"
+                    className="soft-blur absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-champagne/45 bg-champagne/12 text-champagne shadow-gold backdrop-blur transition hover:border-champagne hover:bg-champagne hover:text-carbon hover:shadow-halo md:right-6"
                     onClick={goNext}
                     type="button"
                     aria-label="下一张作品图"
@@ -169,7 +176,7 @@ export default function WorkModal({ work, onClose }: WorkModalProps) {
               ) : null}
 
               {canSlide ? (
-                <div className="no-scrollbar relative z-10 mx-auto mb-5 flex max-w-[86%] items-center gap-2 overflow-x-auto rounded-lg border border-white/10 bg-black/[0.42] p-2 backdrop-blur md:mb-6">
+                <div className="soft-blur no-scrollbar relative z-10 mx-auto mb-5 flex max-w-[86%] items-center gap-2 overflow-x-auto rounded-lg border border-white/10 bg-black/[0.42] p-2 backdrop-blur md:mb-6">
                   {modalImages.map((image, index) => (
                     <button
                       key={`${image}-${index}`}
@@ -181,7 +188,13 @@ export default function WorkModal({ work, onClose }: WorkModalProps) {
                       aria-pressed={slideIndex === index}
                       aria-label={`跳转到第 ${index + 1} 张作品图`}
                     >
-                      <Image src={image} alt="" fill sizes="64px" quality={45} loading="lazy" className="object-cover" />
+                      {isNearbyThumbnail(index, slideIndex, imageCount) ? (
+                        <Image src={image} alt="" fill sizes="64px" quality={isMobile ? 32 : 45} loading="lazy" className="object-cover" />
+                      ) : (
+                        <span className="flex h-full w-full items-center justify-center bg-white/[0.04] text-[11px] text-cream/[0.46]">
+                          {index + 1}
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>

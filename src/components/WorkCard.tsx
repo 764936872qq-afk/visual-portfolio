@@ -9,10 +9,11 @@ type WorkCardProps = {
   work: Work;
   index: number;
   emphasized?: boolean;
+  isMobile?: boolean;
   onSelect: (work: Work) => void;
 };
 
-export default function WorkCard({ work, index, emphasized = false, onSelect }: WorkCardProps) {
+export default function WorkCard({ work, index, emphasized = false, isMobile = false, onSelect }: WorkCardProps) {
   return (
     <motion.button
       className={`group glass-panel relative overflow-hidden rounded-lg text-left transition ${
@@ -20,19 +21,19 @@ export default function WorkCard({ work, index, emphasized = false, onSelect }: 
       }`}
       onClick={() => onSelect(work)}
       type="button"
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.55, delay: Math.min(index * 0.035, 0.22), ease: "easeOut" }}
-      whileHover={{ y: -8 }}
+      initial={isMobile ? false : { opacity: 0, y: 28 }}
+      whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+      viewport={isMobile ? undefined : { once: true, margin: "-80px" }}
+      transition={isMobile ? undefined : { duration: 0.55, delay: Math.min(index * 0.035, 0.22), ease: "easeOut" }}
+      whileHover={isMobile ? undefined : { y: -8 }}
     >
       <div className={`relative overflow-hidden ${emphasized ? "aspect-[16/10]" : "aspect-[4/5]"}`}>
         <Image
           src={work.coverImage}
           alt={work.title}
           fill
-          sizes={emphasized ? "(max-width: 640px) 92vw, (min-width: 768px) 50vw, 100vw" : "(max-width: 640px) 92vw, (min-width: 768px) 33vw, 100vw"}
-          quality={72}
+          sizes={emphasized ? "(max-width: 640px) 88vw, (min-width: 768px) 50vw, 100vw" : "(max-width: 640px) 88vw, (min-width: 768px) 33vw, 100vw"}
+          quality={isMobile ? 58 : 72}
           loading="lazy"
           className="object-cover transition duration-700 group-hover:scale-105"
         />

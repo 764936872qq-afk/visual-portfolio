@@ -17,7 +17,7 @@ export default function Navigation() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-champagne/10 bg-carbon/[0.68] backdrop-blur-2xl">
+    <header className="site-nav fixed inset-x-0 top-0 z-50 border-b border-champagne/10 bg-carbon/[0.68] backdrop-blur-2xl">
       <nav className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 md:px-8">
         <a href="#hero" className="group flex items-center gap-3" aria-label="返回首页">
           <span className="flex h-10 w-10 items-center justify-center rounded-full border border-champagne/[0.35] bg-champagne/10 text-sm font-semibold text-champagne shadow-gold">

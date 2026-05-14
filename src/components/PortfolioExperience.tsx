@@ -13,7 +13,7 @@ import {
   Sparkles
 } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Navigation from "@/components/Navigation";
 import SectionHeader from "@/components/SectionHeader";
 import WorkCard from "@/components/WorkCard";
@@ -64,11 +64,32 @@ function isEmphasized(index: number) {
   return index === 0 || index === 5 || index === 12 || index % 17 === 0;
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(true);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(mediaQuery.matches);
+
+    update();
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", update);
+      return () => mediaQuery.removeEventListener("change", update);
+    }
+
+    mediaQuery.addListener(update);
+    return () => mediaQuery.removeListener(update);
+  }, []);
+
+  return isMobile;
+}
+
 export default function PortfolioExperience({ works }: { works: Work[] }) {
   const [activeCategory, setActiveCategory] = useState<(typeof categories)[number]>("全部");
   const [selectedWork, setSelectedWork] = useState<Work | null>(null);
+  const isMobile = useIsMobile();
 
-  const heroImages = useMemo(() => works.slice(0, 3).map((work) => work.coverImage), [works]);
+  const heroImages = useMemo(() => works.slice(0, isMobile ? 1 : 3).map((work) => work.coverImage), [isMobile, works]);
 
   const featuredWorks = useMemo(() => works.slice(0, 3), [works]);
   const archiveWorks = useMemo(() => works.slice(featuredWorks.length), [featuredWorks.length, works]);
@@ -81,27 +102,28 @@ export default function PortfolioExperience({ works }: { works: Work[] }) {
   return (
     <main className="site-shell min-h-screen overflow-hidden">
       <Navigation />
-      <Hero images={heroImages} />
-      <Capabilities />
-      <FeaturedWorks works={featuredWorks} onSelect={setSelectedWork} />
+      <Hero images={heroImages} isMobile={isMobile} />
+      <Capabilities isMobile={isMobile} />
+      <FeaturedWorks works={featuredWorks} isMobile={isMobile} onSelect={setSelectedWork} />
       <WorksSection
         activeCategory={activeCategory}
         filteredWorks={filteredWorks}
+        isMobile={isMobile}
         onCategoryChange={setActiveCategory}
         onSelect={setSelectedWork}
       />
-      <About />
-      <Contact />
-      <WorkModal work={selectedWork} onClose={() => setSelectedWork(null)} />
+      <About isMobile={isMobile} />
+      <Contact isMobile={isMobile} />
+      <WorkModal work={selectedWork} isMobile={isMobile} onClose={() => setSelectedWork(null)} />
     </main>
   );
 }
 
-function Hero({ images }: { images: string[] }) {
+function Hero({ images, isMobile }: { images: string[]; isMobile: boolean }) {
   return (
     <section id="hero" className="relative min-h-screen px-5 pb-20 pt-32 md:px-8 md:pb-24 md:pt-36">
-      <div className="absolute left-1/2 top-20 h-72 w-72 -translate-x-1/2 rounded-full bg-champagne/[0.16] blur-3xl" />
-      <div className="absolute right-0 top-28 h-96 w-72 rounded-full bg-steel/[0.14] blur-3xl" />
+      <div className="hero-glow absolute left-1/2 top-20 h-72 w-72 -translate-x-1/2 rounded-full bg-champagne/[0.16] blur-3xl" />
+      <div className="hero-glow absolute right-0 top-28 h-96 w-72 rounded-full bg-steel/[0.14] blur-3xl" />
       <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
         <motion.div
           initial={{ opacity: 0, y: 36 }}
@@ -158,7 +180,7 @@ function Hero({ images }: { images: string[] }) {
           className="relative min-h-[560px] lg:min-h-[680px]"
           initial={{ opacity: 0, x: 48 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.9, delay: 0.12, ease: "easeOut" }}
+          transition={{ duration: isMobile ? 0.35 : 0.9, delay: isMobile ? 0 : 0.12, ease: "easeOut" }}
         >
           <div className="absolute left-8 top-0 h-24 w-px bg-gradient-to-b from-champagne/0 via-champagne/80 to-champagne/0" />
           <div className="absolute right-10 top-24 h-72 w-72 rounded-full border border-champagne/20" />
@@ -174,20 +196,20 @@ function Hero({ images }: { images: string[] }) {
                     ? "left-0 top-52 h-[310px] w-[54%]"
                     : "bottom-0 right-10 h-[260px] w-[58%]"
               }`}
-              animate={{ y: [0, index % 2 === 0 ? -14 : 12, 0] }}
-              transition={{ duration: 6 + index, repeat: Infinity, ease: "easeInOut" }}
+              animate={isMobile ? undefined : { y: [0, index % 2 === 0 ? -14 : 12, 0] }}
+              transition={isMobile ? undefined : { duration: 6 + index, repeat: Infinity, ease: "easeInOut" }}
             >
               <Image
                 src={image}
                 alt="作品预览"
                 fill
-                sizes="(max-width: 640px) 72vw, (min-width: 1024px) 42vw, 80vw"
-                quality={72}
+                sizes="(max-width: 640px) 60vw, (min-width: 1024px) 42vw, 80vw"
+                quality={isMobile ? 56 : 72}
                 loading="lazy"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-carbon/[0.65] to-transparent" />
-              <div className="absolute left-5 top-5 rounded-full border border-champagne/25 bg-black/[0.35] px-3 py-1 text-xs text-champagne backdrop-blur">
+              <div className="soft-blur absolute left-5 top-5 rounded-full border border-champagne/25 bg-black/[0.35] px-3 py-1 text-xs text-champagne backdrop-blur">
                 SELECTED WORK
               </div>
             </motion.div>
@@ -198,7 +220,7 @@ function Hero({ images }: { images: string[] }) {
   );
 }
 
-function Capabilities() {
+function Capabilities({ isMobile }: { isMobile: boolean }) {
   return (
     <section id="capabilities" className="px-5 py-20 md:px-8 md:py-28">
       <div className="mx-auto max-w-7xl">
@@ -206,6 +228,7 @@ function Capabilities() {
           eyebrow="CAPABILITY MATRIX"
           title="从品牌系统到高压营销现场，保持清晰、快速、可落地。"
           description="能力不是堆工具，而是把商业目标翻译成能被消费者看见、理解、记住的视觉系统。"
+          isMobile={isMobile}
         />
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {capabilities.map((item, index) => {
@@ -214,11 +237,11 @@ function Capabilities() {
               <motion.article
                 key={item.no}
                 className="glass-panel group rounded-lg p-6 transition hover:border-champagne/[0.55] hover:shadow-gold"
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.55, delay: index * 0.08 }}
-                whileHover={{ y: -8 }}
+                initial={isMobile ? false : { opacity: 0, y: 28 }}
+                whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+                viewport={isMobile ? undefined : { once: true, margin: "-80px" }}
+                transition={isMobile ? undefined : { duration: 0.55, delay: index * 0.08 }}
+                whileHover={isMobile ? undefined : { y: -8 }}
               >
                 <div className="mb-10 flex items-center justify-between">
                   <span className="metal-text text-3xl font-semibold">{item.no}</span>
@@ -237,17 +260,18 @@ function Capabilities() {
   );
 }
 
-function FeaturedWorks({ works, onSelect }: { works: Work[]; onSelect: (work: Work) => void }) {
+function FeaturedWorks({ works, isMobile, onSelect }: { works: Work[]; isMobile: boolean; onSelect: (work: Work) => void }) {
   return (
     <section id="featured" className="px-5 py-20 md:px-8 md:py-28">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="FEATURED PROJECTS"
           title="精选作品以真实商业项目为核心，呈现品牌、包装与转化设计能力。"
+          isMobile={isMobile}
         />
         <div className="grid gap-5 lg:grid-cols-3">
           {works.slice(0, 3).map((work, index) => (
-            <WorkCard key={`${work.title}-${index}`} work={work} index={index} emphasized={index === 0} onSelect={onSelect} />
+            <WorkCard key={`${work.title}-${index}`} work={work} index={index} emphasized={index === 0} isMobile={isMobile} onSelect={onSelect} />
           ))}
         </div>
       </div>
@@ -258,11 +282,13 @@ function FeaturedWorks({ works, onSelect }: { works: Work[]; onSelect: (work: Wo
 function WorksSection({
   activeCategory,
   filteredWorks,
+  isMobile,
   onCategoryChange,
   onSelect
 }: {
   activeCategory: (typeof categories)[number];
   filteredWorks: Work[];
+  isMobile: boolean;
   onCategoryChange: (category: (typeof categories)[number]) => void;
   onSelect: (work: Work) => void;
 }) {
@@ -274,6 +300,7 @@ function WorksSection({
             eyebrow="PORTFOLIO ARCHIVE"
             title="作品集列表"
             description="围绕品牌、电商、包装、AIGC视觉沉淀作品资产，用不同项目验证商业目标下的设计执行力。"
+            isMobile={isMobile}
           />
           <div className="no-scrollbar flex gap-2 overflow-x-auto pb-2 md:flex-wrap md:justify-end md:pb-10">
             {categories.map((category) => (
@@ -293,13 +320,14 @@ function WorksSection({
           </div>
         </div>
 
-        <motion.div layout className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <motion.div layout={!isMobile} className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {filteredWorks.map((work, index) => (
             <WorkCard
               key={`${work.title}-${work.coverImage}`}
               work={work}
               index={index}
               emphasized={isEmphasized(index)}
+              isMobile={isMobile}
               onSelect={onSelect}
             />
           ))}
@@ -309,16 +337,16 @@ function WorksSection({
   );
 }
 
-function About() {
+function About({ isMobile }: { isMobile: boolean }) {
   return (
     <section id="about" className="px-5 py-20 md:px-8 md:py-28">
       <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr]">
         <motion.div
           className="glass-panel rounded-lg p-7 md:p-9"
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.65 }}
+          initial={isMobile ? false : { opacity: 0, y: 28 }}
+          whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+          viewport={isMobile ? undefined : { once: true, margin: "-80px" }}
+          transition={isMobile ? undefined : { duration: 0.65 }}
         >
           <p className="text-sm text-champagne">ABOUT DESIGNER</p>
           <h2 className="mt-5 text-5xl font-semibold text-cream md:text-7xl">王兴</h2>
@@ -343,10 +371,10 @@ function About() {
 
         <motion.div
           className="relative rounded-lg border border-champagne/[0.18] bg-white/[0.025] p-7 md:p-10"
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.65, delay: 0.08 }}
+          initial={isMobile ? false : { opacity: 0, y: 28 }}
+          whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+          viewport={isMobile ? undefined : { once: true, margin: "-80px" }}
+          transition={isMobile ? undefined : { duration: 0.65, delay: 0.08 }}
         >
           <div className="absolute right-8 top-8 hidden text-8xl font-semibold text-white/[0.035] md:block">10</div>
           <div className="mb-8 flex items-center gap-4">
@@ -369,18 +397,18 @@ function About() {
   );
 }
 
-function Contact() {
+function Contact({ isMobile }: { isMobile: boolean }) {
   return (
     <section id="contact" className="px-5 pb-10 pt-20 md:px-8 md:pb-16 md:pt-28">
       <div className="mx-auto max-w-7xl">
         <motion.div
           className="glass-panel relative overflow-hidden rounded-lg p-8 md:p-12"
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.65 }}
+          initial={isMobile ? false : { opacity: 0, y: 28 }}
+          whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+          viewport={isMobile ? undefined : { once: true, margin: "-80px" }}
+          transition={isMobile ? undefined : { duration: 0.65 }}
         >
-          <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-champagne/20 blur-3xl" />
+          <div className="hero-glow absolute -right-20 -top-20 h-72 w-72 rounded-full bg-champagne/20 blur-3xl" />
           <div className="relative grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
             <div>
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-champagne/25 bg-champagne/[0.08] px-4 py-2 text-sm text-champagne">
