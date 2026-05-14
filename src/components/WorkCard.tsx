@@ -31,7 +31,9 @@ export default function WorkCard({ work, index, emphasized = false, onSelect }: 
           src={work.coverImage}
           alt={work.title}
           fill
-          sizes={emphasized ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 33vw, 100vw"}
+          sizes={emphasized ? "(max-width: 640px) 92vw, (min-width: 768px) 50vw, 100vw" : "(max-width: 640px) 92vw, (min-width: 768px) 33vw, 100vw"}
+          quality={72}
+          loading="lazy"
           className="object-cover transition duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-carbon via-carbon/[0.12] to-transparent opacity-[0.92]" />

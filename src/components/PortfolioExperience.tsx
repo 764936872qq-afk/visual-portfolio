@@ -138,14 +138,16 @@ function Hero({ images }: { images: string[] }) {
             </a>
           </div>
 
-          <div className="mt-14 grid max-w-2xl grid-cols-3 gap-3">
+          <div className="mt-14 grid max-w-2xl grid-cols-[repeat(auto-fit,minmax(132px,1fr))] gap-3 sm:grid-cols-3">
             {[
               ["10年", "平面设计经验"],
               ["Ps/Ai/CDR/Id", "核心工具链"],
               ["印刷链路", "工艺成本经验"]
             ].map(([value, label]) => (
-              <div key={label} className="glass-panel rounded-lg p-4">
-                <div className="text-2xl font-semibold text-cream md:text-3xl">{value}</div>
+              <div key={label} className="glass-panel flex min-h-[116px] min-w-0 flex-col justify-between overflow-hidden rounded-lg px-4 py-5">
+                <div className="min-w-0 break-words text-[clamp(1.25rem,4.4vw,1.875rem)] font-semibold leading-snug text-cream md:text-[clamp(1.35rem,2vw,1.875rem)]">
+                  {value}
+                </div>
                 <div className="mt-2 text-xs text-cream/[0.48]">{label}</div>
               </div>
             ))}
@@ -175,7 +177,15 @@ function Hero({ images }: { images: string[] }) {
               animate={{ y: [0, index % 2 === 0 ? -14 : 12, 0] }}
               transition={{ duration: 6 + index, repeat: Infinity, ease: "easeInOut" }}
             >
-              <Image src={image} alt="作品预览" fill sizes="(min-width: 1024px) 42vw, 80vw" className="object-cover" priority={index === 0} />
+              <Image
+                src={image}
+                alt="作品预览"
+                fill
+                sizes="(max-width: 640px) 72vw, (min-width: 1024px) 42vw, 80vw"
+                quality={72}
+                loading="lazy"
+                className="object-cover"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-carbon/[0.65] to-transparent" />
               <div className="absolute left-5 top-5 rounded-full border border-champagne/25 bg-black/[0.35] px-3 py-1 text-xs text-champagne backdrop-blur">
                 SELECTED WORK

@@ -126,7 +126,15 @@ export default function WorkModal({ work, onClose }: WorkModalProps) {
                   exit={{ opacity: 0, scale: 0.985 }}
                   transition={{ duration: 0.32, ease: "easeOut" }}
                 >
-                  <Image src={currentImage} alt={`${work.title} ${slideIndex + 1}`} fill sizes="92vw" className="object-contain" priority />
+                  <Image
+                    src={currentImage}
+                    alt={`${work.title} ${slideIndex + 1}`}
+                    fill
+                    sizes="(max-width: 768px) 92vw, 68vw"
+                    quality={82}
+                    loading="lazy"
+                    className="object-contain"
+                  />
                 </motion.div>
               </AnimatePresence>
 
@@ -173,7 +181,7 @@ export default function WorkModal({ work, onClose }: WorkModalProps) {
                       aria-pressed={slideIndex === index}
                       aria-label={`跳转到第 ${index + 1} 张作品图`}
                     >
-                      <Image src={image} alt="" fill sizes="64px" className="object-cover" />
+                      <Image src={image} alt="" fill sizes="64px" quality={45} loading="lazy" className="object-cover" />
                     </button>
                   ))}
                 </div>
