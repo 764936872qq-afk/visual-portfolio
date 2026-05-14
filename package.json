@@ -2,6 +2,7 @@
   "name": "wang-xing-visual-portfolio",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "optimize:images": "node scripts/optimize-static-images.mjs",
     "prebuild": "npm run optimize:images",
